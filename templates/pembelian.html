@@ -12,47 +12,47 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
         body { 
             background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
-        
         .container { 
-            max-width: 1100px;
+            max-width: 100%;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 0;
+            box-shadow: none;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        
         .header-section {
             background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
-            padding: 30px;
+            padding: 25px 40px;
             color: white;
         }
-        
         .header-section h3 {
-            font-size: 28px;
+            font-size: 42px;
             font-weight: 700;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 20px;
         }
-        
         .header-section .subtitle {
-            font-size: 14px;
+            font-size: 22px;
             opacity: 0.9;
-            margin-top: 5px;
+            margin-top: 8px;
         }
-        
-        .content-section {
-            padding: 30px;
+        .content-section { 
+            padding: 30px 40px;
+            flex: 1;
+            overflow-y: auto;
         }
-        
         .table-wrapper {
             background: #e8f5e9;
             border-radius: 12px;
@@ -60,114 +60,75 @@
             margin-bottom: 25px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        
-        #tabelPembelian {
-            margin-bottom: 0;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
+        #tabelPembelian { margin-bottom: 0; background: white; border-radius: 10px; overflow: hidden; }
         #tabelPembelian thead th {
             background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
             color: white;
             font-weight: 600;
-            font-size: 13px;
-            padding: 15px 10px;
+            font-size: 22px;
+            padding: 20px 15px;
             border: none;
             text-align: center;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
-        
-        #tabelPembelian tbody tr {
-            transition: all 0.3s ease;
-        }
-        
+        #tabelPembelian tbody tr { transition: all 0.3s ease; }
         #tabelPembelian tbody tr:not(#inputRow):hover {
             background-color: #e8f5e9;
             transform: scale(1.01);
             box-shadow: 0 4px 12px rgba(45, 122, 79, 0.15);
         }
-        
         #tabelPembelian tbody td {
-            padding: 12px 10px;
+            padding: 18px 15px;
             vertical-align: middle;
             border-color: #e9ecef;
+            font-size: 20px;
         }
-        
         #inputRow td {
             background: linear-gradient(135deg, #fff7e6 0%, #ffe6f0 100%);
             font-weight: 500;
-            padding: 15px !important;
+            padding: 20px !important;
+            font-size: 20px;
         }
-        
         .form-control {
             border: 2px solid #c8e6c9;
             border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 14px;
+            padding: 15px 18px;
+            font-size: 22px;
             transition: all 0.3s ease;
         }
-        
         .form-control:focus {
             border-color: #2d7a4f;
             box-shadow: 0 0 0 3px rgba(45, 122, 79, 0.1);
             outline: none;
         }
-        
-        .form-control[readonly] { 
-            background-color: #f1f3f4 !important;
-            cursor: not-allowed;
-        }
-        
-        input.text-end { 
-            text-align: right;
-            font-weight: 500;
-        }
-        
-        .subtotal {
-            font-weight: 700;
-            color: #2d7a4f;
-            font-size: 15px;
-        }
-        
+        .form-control[readonly] { background-color: #f1f3f4 !important; cursor: not-allowed; }
+        input.text-end { text-align: right; font-weight: 500; }
+        .subtotal { font-weight: 700; color: #2d7a4f; font-size: 24px; }
         .summary-section {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 15px rgba(45, 122, 79, 0.1);
         }
-        
-        .summary-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
+        .summary-item { display: flex; flex-direction: column; gap: 8px; }
         .summary-label {
-            font-size: 13px;
+            font-size: 20px;
             color: #2d7a4f;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
-        .summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-        
+        .summary-value { font-size: 42px; font-weight: 700; color: #333; }
         .btn-save {
             background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
             border: none;
-            padding: 15px 40px;
-            font-size: 16px;
+            padding: 20px 50px;
+            font-size: 26px;
             font-weight: 600;
             color: white;
             border-radius: 10px;
@@ -175,49 +136,23 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
-        
         .btn-save:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 30px rgba(45, 122, 79, 0.4);
             background: linear-gradient(135deg, #1a5738 0%, #2d7a4f 100%);
         }
-        
-        .btn-save:active {
-            transform: translateY(0);
-        }
-        
-        .text-muted {
-            color: #999 !important;
-        }
-        
-        /* Animasi untuk row baru */
+        .btn-save:active { transform: translateY(0); }
+        .text-muted { color: #999 !important; }
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        #tabelPembelian tbody tr:not(#inputRow) {
-            animation: slideIn 0.3s ease;
-        }
-        
-        /* Responsive */
+        #tabelPembelian tbody tr:not(#inputRow) { animation: slideIn 0.3s ease; }
         @media (max-width: 768px) {
-            .summary-section {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .header-section h3 {
-                font-size: 22px;
-            }
+            .summary-section { flex-direction: column; gap: 15px; }
+            .header-section h3 { font-size: 32px; }
         }
     </style>
 </head>
@@ -287,16 +222,16 @@ $(document).ready(function() {
     }
 
     function unformatRupiah(text) {
-        return parseInt(text.replace(/[^\d]/g, "")) || 0;
+        return parseInt(String(text).replace(/[^\d]/g, "")) || 0;
     }
 
     function formatPersen(angka) {
-        angka = parseInt(angka) || 0;
+        angka = parseFloat(angka) || 0;
         return angka + "%";
     }
 
     function unformatPersen(text) {
-        return parseInt(text.replace(/[^\d]/g, "")) || 0;
+        return parseFloat(String(text).replace(/[^\d.]/g, "")) || 0;
     }
 
     // === Tambah Barang Berdasarkan Kode ===
@@ -344,7 +279,7 @@ $(document).ready(function() {
     $(document).on("input", ".margin", function() {
         let val = $(this).val().replace(/[^\d]/g, "");
         if (val === "") val = "0";
-        if (parseInt(val) > 100) val = "100";
+        if (parseFloat(val) > 100) val = "100";
         $(this).val(formatPersen(val));
     });
 
@@ -384,17 +319,17 @@ $(document).ready(function() {
         let jual = unformatRupiah(row.find(".harga_jual").val());
         let margin = unformatPersen(row.find(".margin").val());
 
-        // Jika margin diubah → hitung harga jual (dibulatkan ke ribuan)
+        // Jika margin diubah → hitung harga jual
         if ($(this).hasClass("margin")) {
             jual = beli + (beli * margin / 100);
-            jual = Math.round(jual / 1000) * 1000; // ⬅ bulatkan ke ribuan
+            jual = Math.round(jual);
             row.find(".harga_jual").val(formatRupiah(jual));
         }
 
         // Jika harga jual diubah → hitung margin ulang
         if ($(this).hasClass("harga_jual")) {
             margin = ((jual - beli) / beli) * 100;
-            margin = isFinite(margin) ? Math.round(margin) : 0;
+            margin = isFinite(margin) ? Math.round(margin * 100) / 100 : 0;
             row.find(".margin").val(formatPersen(margin));
         }
 
@@ -405,6 +340,7 @@ $(document).ready(function() {
         updateTotal();
     });
 
+    // === Update total keseluruhan ===
     function updateTotal() {
         let total = 0, item = 0;
         $("#tabelPembelian tbody tr").each(function() {
