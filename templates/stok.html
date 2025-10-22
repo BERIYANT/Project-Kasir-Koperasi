@@ -537,10 +537,11 @@
     </div>
 </div>
 
+<!-- ======= JAVASCRIPT SECTION ======= -->
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
 
-    // Search functionality
+    // === Filter pencarian ===
     $('#searchInput').on('keyup', function() {
         const value = $(this).val().toLowerCase();
         $('#stockTable tbody tr').filter(function() {
@@ -562,7 +563,7 @@ $(document).ready(function(){
             stok: tr.find(".stok").val()
         };
 
-        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Menyimpan...');
+        btn.prop('disabled', true).text('Menyimpan...');
 
         $.ajax({
             url: "/update_stok",
@@ -570,37 +571,31 @@ $(document).ready(function(){
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function(res){
-                if (!res.error){
-                    alert("✅ " + res.message);
-                } else {
-                    alert("❌ Gagal: " + res.message);
-                }
-                btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg> Simpan');
+                alert(res.error ? "❌ " + res.message : "✅ " + res.message);
+                btn.prop('disabled', false).text('Simpan');
             },
             error: function(){
                 alert("❌ Terjadi kesalahan server!");
-                btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg> Simpan');
+                btn.prop('disabled', false).text('Simpan');
             }
         });
     });
 
-    // === Hapus Baris Stok ===
+    // === Hapus Stok ===
     $(".btn-del").click(function(){
         const tr = $(this).closest("tr");
         const id = tr.data("id");
-        const namaBarang = tr.find('td:eq(1)').text();
-        
-        if (!confirm(`⚠️ Yakin ingin menghapus "${namaBarang}" dari stok?`)) return;
+        const nama = tr.find("td:eq(1)").text();
+
+        if (!confirm(`⚠️ Yakin ingin menghapus "${nama}" dari stok?`)) return;
 
         $.ajax({
             url: "/hapus_stok/" + id,
             method: "DELETE",
             success: function(res){
                 if (!res.error){
-                    tr.fadeOut(400, function() {
-                        $(this).remove();
-                        alert("✅ " + res.message);
-                    });
+                    tr.fadeOut(400, () => tr.remove());
+                    alert("✅ " + res.message);
                 } else {
                     alert("❌ Gagal hapus: " + res.message);
                 }
@@ -609,6 +604,38 @@ $(document).ready(function(){
                 alert("❌ Gagal menghapus data!");
             }
         });
+    });
+
+    // === Helper Format ===
+    function formatRupiah(angka) {
+        angka = parseFloat(angka) || 0;
+        return angka.toLocaleString("id-ID");
+    }
+
+    function unformatRupiah(text) {
+        return parseFloat(String(text).replace(/[^\d]/g, "")) || 0;
+    }
+
+    // === Saat margin diubah, harga jual ikut berubah ===
+    $(document).on("input", ".margin", function() {
+        const row = $(this).closest("tr");
+        const hargaBeli = parseFloat(row.find(".harga_beli").val()) || 0;
+        let margin = parseFloat($(this).val()) || 0;
+        if (margin > 100) margin = 100;
+        const hargaJual = Math.round(hargaBeli + (hargaBeli * margin / 100));
+        row.find(".harga_jual").val(hargaJual);
+    });
+
+    // === Saat harga jual diubah, margin ikut berubah ===
+    $(document).on("input", ".harga_jual", function() {
+        const row = $(this).closest("tr");
+        const hargaBeli = parseFloat(row.find(".harga_beli").val()) || 0;
+        const hargaJual = parseFloat($(this).val()) || 0;
+        let margin = 0;
+        if (hargaBeli > 0) {
+            margin = ((hargaJual - hargaBeli) / hargaBeli) * 100;
+        }
+        row.find(".margin").val(margin.toFixed(2));
     });
 
 });
