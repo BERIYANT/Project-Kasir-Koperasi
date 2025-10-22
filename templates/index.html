@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Koperasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a5f31 0%, #0f7d40 50%, #1a9d56 100%);
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Elements */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite;
+        }
+
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: white;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: white;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-30px, 30px) scale(0.9);
+            }
+        }
+
+        .container-wrapper {
+            max-width: 580px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo-circle {
+            width: 95px;
+            height: 95px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2),
+                        inset 0 -2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2),
+                            inset 0 -2px 10px rgba(0,0,0,0.05);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.25),
+                            inset 0 -2px 10px rgba(0,0,0,0.05);
+            }
+        }
+
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: ripple 3s infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .logo-circle svg {
+            width: 50px;
+            height: 50px;
+            fill: #0f7d40;
+            filter: drop-shadow(0 2px 4px rgba(15, 125, 64, 0.2));
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            border: none;
+            background: white;
+            padding: 50px 40px;
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #0f7d40, #1a9d56, #22c55e);
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f7d40, #1a9d56);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .card-subtitle {
+            color: #6c757d;
+            font-size: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .btn-custom {
+            border-radius: 18px;
+            font-weight: 600;
+            padding: 20px 35px;
+            font-size: 16px;
+            border: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-custom:hover::after {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-custom span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-custom .icon {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-custom:hover .icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .btn-penjualan {
+            background: linear-gradient(135deg, #0f7d40 0%, #1a9d56 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(15, 125, 64, 0.35);
+        }
+
+        .btn-penjualan:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(15, 125, 64, 0.45);
+            color: white;
+        }
+
+        .btn-penjualan:active {
+            transform: translateY(-2px);
+        }
+
+        .btn-pembelian {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(22, 163, 74, 0.35);
+        }
+
+        .btn-pembelian:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(22, 163, 74, 0.45);
+            color: white;
+        }
+
+        .btn-pembelian:active {
+            transform: translateY(-2px);
+        }
+
+        .btn-stok {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.35);
+        }
+
+        .btn-stok:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(5, 150, 105, 0.45);
+            color: white;
+        }
+
+        .btn-stok:active {
+            transform: translateY(-2px);
+        }
+
+        .icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .divider {
+            margin: 35px 0 25px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #dee2e6 20%, #dee2e6 80%, transparent);
+            border: none;
+        }
+
+        .footer-text {
+            color: #6c757d;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .features-hint {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .feature-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease;
+        }
+
+        .feature-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .card {
+                padding: 40px 28px;
+            }
+            .card-title {
+                font-size: 24px;
+            }
+            .btn-custom {
+                padding: 18px 28px;
+                font-size: 15px;
+            }
+            .logo-text {
+                font-size: 28px;
+            }
+            .logo-circle {
+                width: 85px;
+                height: 85px;
+            }
+            .logo-circle svg {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-wrapper">
+    <div class="logo-section">
+        <div class="logo-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </div>
+        <div class="logo-text">KOPERASI</div>
+        <div class="subtitle">Sistem Manajemen Toko Modern</div>
+        
+        <div class="features-hint">
+            <div class="feature-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Cepat</span>
+            </div>
+            <div class="feature-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Mudah</span>
+            </div>
+            <div class="feature-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Akurat</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Kasir Koperasi</h2>
+        <p class="card-subtitle">Silakan pilih jenis transaksi yang ingin dilakukan</p>
+
+        <div class="d-grid gap-3">
+            <!-- Tombol Penjualan -->
+            <a href="{{ url_for('penjualan') }}" class="btn btn-custom btn-penjualan">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span>Penjualan</span>
+            </a>
+            
+            <!-- Tombol Pembelian -->
+            <a href="{{ url_for('pembelian') }}" class="btn btn-custom btn-pembelian">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <span>Pembelian</span>
+            </a>
+
+            <!-- Tombol Lihat Stok -->
+            <a href="{{ url_for('stok') }}" class="btn btn-custom btn-stok">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" 
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+                <span>Lihat Stok</span>
+            </a>
+        </div>
+
+        <hr class="divider">
+        
+        <div class="footer-text">
+            © 2024 Kasir Koperasi • Sistem Manajemen Terpadu
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

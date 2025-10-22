@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Stok Barang - Kasir Koperasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background: linear-gradient(135deg, #0f7d40 0%, #1a9d56 100%);
+            box-shadow: 0 4px 20px rgba(15, 125, 64, 0.2);
+            padding: 18px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(-5px);
+        }
+
+        .navbar-brand svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: #0f7d40 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+        }
+
+        /* Header Card */
+        .header-card {
+            background: linear-gradient(135deg, #0f7d40 0%, #1a9d56 100%);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(15, 125, 64, 0.25);
+            color: white;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header-card h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header-card p {
+            margin: 10px 0 0 0;
+            opacity: 0.95;
+            font-size: 15px;
+        }
+
+        /* Main Card */
+        .card {
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: none;
+            background: white;
+            padding: 35px;
+            animation: fadeInUp 0.7s ease;
+        }
+
+        /* Search & Filter Section */
+        .search-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #0f7d40;
+            box-shadow: 0 0 0 3px rgba(15, 125, 64, 0.1);
+        }
+
+        .search-box svg {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            stroke: #6c757d;
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        table {
+            margin-bottom: 0;
+        }
+
+        table thead th {
+            background: linear-gradient(135deg, #0f7d40 0%, #1a9d56 100%) !important;
+            color: white !important;
+            font-weight: 600;
+            padding: 18px 15px;
+            border: none;
+            font-size: 14px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        table td {
+            padding: 15px 10px;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        table .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        table .form-control:focus {
+            border-color: #0f7d40;
+            box-shadow: 0 0 0 3px rgba(15, 125, 64, 0.1);
+        }
+
+        /* Badge Stok */
+        .badge-stok {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .badge-stok.high {
+            background: linear-gradient(135deg, #10b981, #22c55e);
+            color: white;
+        }
+
+        .badge-stok.medium {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+        }
+
+        .badge-stok.low {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 3px;
+        }
+
+        .btn-action svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-action.btn-save {
+            background: linear-gradient(135deg, #0f7d40, #1a9d56);
+            color: white;
+        }
+
+        .btn-action.btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(15, 125, 64, 0.3);
+        }
+
+        .btn-action.btn-del {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+
+        .btn-action.btn-del:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Footer Actions */
+        .footer-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #0f7d40, #1a9d56);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(15, 125, 64, 0.3);
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(15, 125, 64, 0.4);
+            color: white;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            stroke: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h4 {
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-card {
+                padding: 25px 20px;
+            }
+
+            .header-card h3 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .search-section {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            table thead th,
+            table td {
+                padding: 12px 8px;
+            }
+
+            .btn-action {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Kasir Koperasi
+        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('pembelian') }}" class="nav-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                </svg>
+                Pembelian
+            </a>
+            <a href="{{ url_for('penjualan') }}" class="nav-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                Penjualan
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="header-card text-center">
+        <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            Data Stok Barang
+        </h3>
+        <p>Kelola dan pantau stok barang koperasi Anda</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Cari berdasarkan kode atau nama barang...">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table class="table table-hover align-middle text-center" id="stockTable">
+                <thead>
+                    <tr>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Harga Beli</th>
+                        <th>Margin (%)</th>
+                        <th>Harga Jual</th>
+                        <th>Stok</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data_stok %}
+                    <tr data-id="{{ row.id_detail }}">
+                        <td><strong>{{ row.kode_barang }}</strong></td>
+                        <td class="text-start">{{ row.nama_barang }}</td>
+                        <td><input type="number" class="form-control text-end harga_beli" value="{{ row.harga_beli }}"></td>
+                        <td><input type="number" class="form-control text-end margin" value="{{ row.margin }}"></td>
+                        <td><input type="number" class="form-control text-end harga_jual" value="{{ row.harga_jual }}"></td>
+                        <td><input type="number" class="form-control text-end stok" value="{{ row.stok }}"></td>
+                        <td>
+                            <span class="badge-stok {% if row.stok > 50 %}high{% elif row.stok > 20 %}medium{% else %}low{% endif %}">
+                                {% if row.stok > 50 %}Aman{% elif row.stok > 20 %}Sedang{% else %}Rendah{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-action btn-save">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Simpan
+                            </button>
+                            <button class="btn-action btn-del">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                </svg>
+                                <h4>Belum Ada Data Stok</h4>
+                                <p>Silakan lakukan pembelian untuk menambah stok barang</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-actions">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Kembali ke Menu Utama
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        const value = $(this).val().toLowerCase();
+        $('#stockTable tbody tr').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    // === Simpan Perubahan Stok ===
+    $(".btn-save").click(function(){
+        const btn = $(this);
+        const tr = btn.closest("tr");
+        const id = tr.data("id");
+
+        const data = {
+            id_detail: id,
+            harga_beli: tr.find(".harga_beli").val(),
+            margin: tr.find(".margin").val(),
+            harga_jual: tr.find(".harga_jual").val(),
+            stok: tr.find(".stok").val()
+        };
+
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Menyimpan...');
+
+        $.ajax({
+            url: "/update_stok",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(res){
+                if (!res.error){
+                    alert("✅ " + res.message);
+                } else {
+                    alert("❌ Gagal: " + res.message);
+                }
+                btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg> Simpan');
+            },
+            error: function(){
+                alert("❌ Terjadi kesalahan server!");
+                btn.prop('disabled', false).html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg> Simpan');
+            }
+        });
+    });
+
+    // === Hapus Baris Stok ===
+    $(".btn-del").click(function(){
+        const tr = $(this).closest("tr");
+        const id = tr.data("id");
+        const namaBarang = tr.find('td:eq(1)').text();
+        
+        if (!confirm(`⚠️ Yakin ingin menghapus "${namaBarang}" dari stok?`)) return;
+
+        $.ajax({
+            url: "/hapus_stok/" + id,
+            method: "DELETE",
+            success: function(res){
+                if (!res.error){
+                    tr.fadeOut(400, function() {
+                        $(this).remove();
+                        alert("✅ " + res.message);
+                    });
+                } else {
+                    alert("❌ Gagal hapus: " + res.message);
+                }
+            },
+            error: function(){
+                alert("❌ Gagal menghapus data!");
+            }
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>
