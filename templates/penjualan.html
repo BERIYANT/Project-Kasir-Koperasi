@@ -2,47 +2,270 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penjualan - Kasir Koperasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        input.text-end { text-align: right; }
-        th, td { vertical-align: middle; }
-        body { background-color: #f8f9fa; }
-        .table input { height: 35px; }
-        .placeholder-input { color: #888; font-style: italic; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { 
+            max-width: 1100px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            padding: 30px;
+            color: white;
+        }
+        
+        .header-section h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-section .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .content-section {
+            padding: 30px;
+        }
+        
+        .table-wrapper {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        #tabelKasir {
+            margin-bottom: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        #tabelKasir thead th {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 15px 10px;
+            border: none;
+            text-align: center;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        #tabelKasir tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        #tabelKasir tbody tr:not(#rowInput):hover {
+            background-color: #e8f5e9;
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(45, 122, 79, 0.15);
+        }
+        
+        #tabelKasir tbody td {
+            padding: 12px 10px;
+            vertical-align: middle;
+            border-color: #e9ecef;
+        }
+        
+        #rowInput td {
+            background: linear-gradient(135deg, #fff7e6 0%, #ffe6f0 100%);
+            font-weight: 500;
+            padding: 15px !important;
+        }
+        
+        .form-control {
+            border: 2px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #2d7a4f;
+            box-shadow: 0 0 0 3px rgba(45, 122, 79, 0.1);
+            outline: none;
+        }
+        
+        input.text-end { 
+            text-align: right;
+            font-weight: 500;
+        }
+        
+        .harga_jual, .subtotal {
+            font-weight: 700;
+            color: #2d7a4f;
+            font-size: 15px;
+        }
+        
+        .summary-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(45, 122, 79, 0.1);
+        }
+        
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .summary-label {
+            font-size: 13px;
+            color: #2d7a4f;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(45, 122, 79, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(45, 122, 79, 0.4);
+            background: linear-gradient(135deg, #1a5738 0%, #2d7a4f 100%);
+        }
+        
+        .btn-save:active {
+            transform: translateY(0);
+        }
+        
+        .text-muted {
+            color: #999 !important;
+        }
+        
+        /* Animasi untuk row baru */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #tabelKasir tbody tr:not(#rowInput) {
+            animation: slideIn 0.3s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .summary-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-section h3 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
-<body class="p-4">
+<body>
 <div class="container">
-    <h3 class="mb-4">🧾 Kasir Koperasi</h3>
-
-    <table class="table table-bordered table-hover" id="tabelKasir">
-        <thead class="table-secondary text-center">
-            <tr>
-                <th style="width: 15%;">Kode</th>
-                <th style="width: 35%;">Nama Barang</th>
-                <th style="width: 15%;">Harga Jual</th>
-                <th style="width: 10%;">Jumlah</th>
-                <th style="width: 20%;">Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Baris input pertama -->
-            <tr id="rowInput">
-                <td><input type="text" id="kode_barang" class="form-control" placeholder="Contoh: BRG001" autofocus></td>
-                <td colspan="4" class="placeholder-input">Masukkan kode barang lalu tekan Enter</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between mt-4">
-        <h5>Total Item: <span id="totalItem">0</span> Item</h5>
-        <h5>Total Harga: <span id="totalHarga">Rp. 0</span></h5>
+    <div class="header-section">
+        <h3>
+            <span>🧾</span>
+            <div>
+                Kasir Koperasi
+                <div class="subtitle">Sistem Transaksi Penjualan Barang</div>
+            </div>
+        </h3>
     </div>
+    
+    <div class="content-section">
+        <div class="table-wrapper">
+            <table class="table table-hover align-middle" id="tabelKasir">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Kode</th>
+                        <th style="width: 35%;">Nama Barang</th>
+                        <th style="width: 20%;">Harga Jual</th>
+                        <th style="width: 15%;">Jumlah</th>
+                        <th style="width: 15%;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="rowInput">
+                        <td><input type="text" id="kode_barang" class="form-control" placeholder="Contoh: BRG001" autofocus></td>
+                        <td colspan="4" class="text-muted fst-italic">Masukkan kode barang lalu tekan Enter</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="text-end mt-3">
-        <button id="btnSimpan" class="btn btn-success">💾 Simpan Transaksi</button>
+        <div class="summary-section">
+            <div class="summary-item">
+                <span class="summary-label">📦 Total Item</span>
+                <span class="summary-value" id="totalItem">0</span>
+            </div>
+            <div class="summary-item" style="text-align: right;">
+                <span class="summary-label">💰 Total Harga</span>
+                <span class="summary-value" id="totalHarga">Rp. 0</span>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button id="btnSimpan" class="btn-save">
+                <span>💾</span>
+                <span>Simpan Transaksi</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -90,6 +313,8 @@ $(document).ready(function() {
 
                 // Kosongkan input kode
                 $("#kode_barang").val("");
+            }).fail(function() {
+                alert("Gagal mengambil data barang dari server!");
             });
         }
     });
@@ -156,8 +381,9 @@ $(document).ready(function() {
                 alert(res.message);
                 location.reload();
             },
-            error: function() {
+            error: function(xhr) {
                 alert("Gagal menyimpan transaksi!");
+                console.error(xhr.responseText);
             }
         });
     });
