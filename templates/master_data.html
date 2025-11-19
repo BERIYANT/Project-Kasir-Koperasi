@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS | Master Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f4f6f9;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover { opacity: 0.8; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .breadcrumb-section {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .master-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .master-card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .master-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .master-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .master-card.barang::before { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .master-card.supplier::before { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .master-card.customer::before { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .master-card.kategori::before { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .master-card.petugas::before { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .master-card.laporan::before { background: linear-gradient(135deg, #34495e, #2c3e50); }
+        .master-card.laporan-penjualan::before { background: linear-gradient(135deg, #16a34a, #15803d); }
+        .master-card.laporan-pembelian::before { background: linear-gradient(135deg, #ea580c, #c2410c); }
+
+        .master-card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .master-card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .master-card-desc {
+            font-size: 14px;
+            color: #95a5a6;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .data-table {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .table {
+            font-size: 14px;
+        }
+
+        .table thead {
+            background: #3498db;
+            color: white;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            border: none;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: #e3f2fd;
+        }
+
+        .table tbody tr.row-dimmed {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .table tbody tr.row-editing {
+            background: #e3f2fd;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            opacity: 1 !important;
+        }
+
+        .form-control {
+            font-size: 14px;
+            border: 1.5px solid #dcecdc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            pointer-events: none;
+            background: #f5f5f5;
+        }
+
+        .form-control.editable {
+            pointer-events: auto;
+            background: white;
+            border-color: #3498db;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .btn-action {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            margin: 0 3px;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: #10b981;
+            color: white;
+            display: none;
+        }
+
+        .btn-save:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            display: none;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            display: none;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .confirm-icon {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .confirm-text {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .confirm-detail {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ef4444;
+        }
+
+        .confirm-detail strong {
+            color: #ef4444;
+        }
+
+        .btn-confirm-delete {
+            background: #ef4444;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm-delete:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel-delete {
+            background: #6c757d;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel-delete:hover {
+            background: #5a6268;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .loading-content .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .master-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .btn-action {
+                padding: 6px 10px;
+                font-size: 11px;
+                display: block;
+                margin: 3px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .master-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo-section">
+            <strong>POS</strong> | Point Of Sales
+        </div>
+        <nav class="nav-menu">
+            <a href="/">🏠 DASHBOARD</a>
+            <a href="/penjualan">💰 PENJUALAN</a>
+            <a href="/pembelian">📦 PEMBELIAN</a>
+            <a href="/stok">📊 STOK</a>
+            <a href="/faktur/history">📋 FAKTUR</a>
+            <a href="/master-data">📚 MASTER DATA</a>
+        </nav>
+        <div class="user-info">
+            <span>👤</span>
+            <span>{{ nama_petugas }}</span>
+            <a href="/logout">🚪 LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="breadcrumb-section">
+            <h5 style="margin: 0; color: #2c3e50; font-weight: 600;">
+                📚 Master Data <small style="color: #95a5a6;">Kelola data master sistem</small>
+            </h5>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="font-size: 13px; margin: 10px 0 0 0;">
+                    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+                    <li class="breadcrumb-item active">Master Data</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="master-cards">
+            <a href="/tambah_barang" class="master-card barang">
+                <div class="master-card-icon">📦</div>
+                <div class="master-card-title">Data Barang</div>
+                <div class="master-card-desc">Kelola data barang dan produk</div>
+            </a>
+
+            <a href="/master/supplier" class="master-card supplier">
+                <div class="master-card-icon">🏢</div>
+                <div class="master-card-title">Data Supplier</div>
+                <div class="master-card-desc">Kelola data pemasok barang</div>
+            </a>
+
+            <a href="/master/customer" class="master-card customer">
+                <div class="master-card-icon">👥</div>
+                <div class="master-card-title">Data Customer</div>
+                <div class="master-card-desc">Kelola data pelanggan</div>
+            </a>
+
+            <a href="/master/kategori" class="master-card kategori">
+                <div class="master-card-icon">🏷️</div>
+                <div class="master-card-title">Kategori Barang</div>
+                <div class="master-card-desc">Kelola kategori produk</div>
+            </a>
+
+            <a href="/master/petugas" class="master-card petugas">
+                <div class="master-card-icon">👨‍💼</div>
+                <div class="master-card-title">Data Petugas</div>
+                <div class="master-card-desc">Kelola data petugas kasir</div>
+            </a>
+
+            <a href="/laporan/penjualan" class="master-card laporan-penjualan">
+                <div class="master-card-icon">📊</div>
+                <div class="master-card-title">Laporan Penjualan</div>
+                <div class="master-card-desc">Lihat laporan penjualan per customer</div>
+            </a>
+
+            <a href="/laporan/pembelian" class="master-card laporan-pembelian">
+                <div class="master-card-icon">📦</div>
+                <div class="master-card-title">Laporan Pembelian</div>
+                <div class="master-card-desc">Lihat laporan pembelian per supplier</div>
+            </a>
+
+            <a href="/laporan" class="master-card laporan">
+                <div class="master-card-icon">💰</div>
+                <div class="master-card-title">Laporan Laba Rugi</div>
+                <div class="master-card-desc">Lihat laporan keuangan</div>
+            </a>
+        </div>
+
+        <div class="data-table">
+            <div class="table-header">
+                <h5 style="margin: 0; color: #2c3e50; font-weight: 600;">📦 Daftar Barang</h5>
+                <a href="/tambah_barang" class="btn btn-primary">+ Tambah Barang Baru</a>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode Barang</th>
+                            <th>Nama Barang</th>
+                            <th>Barcode</th>
+                            <th>Harga Jual Tertinggi</th>
+                            <th>Total Stok</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="barangTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="loading-spinner"></div>
+                                <span style="margin-left: 10px;">Memuat data...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">⚠️ Konfirmasi Hapus Barang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirm-icon">🗑️</div>
+                    <p class="confirm-text">Apakah Anda yakin ingin menghapus barang ini?</p>
+                    <div class="confirm-detail">
+                        <p style="margin: 0;"><strong>Kode:</strong> <span id="deleteKode"></span></p>
+                        <p style="margin: 0;"><strong>Nama Barang:</strong> <span id="deleteNama"></span></p>
+                        <p style="margin: 10px 0 0 0; color: #dc2626; font-weight: 600;">⚠️ Semua detail barang (stok, harga) akan ikut terhapus dan tidak dapat dikembalikan!</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content: center; gap: 10px;">
+                    <button type="button" class="btn-cancel-delete" data-bs-dismiss="modal">❌ Batal</button>
+                    <button type="button" class="btn-confirm-delete" id="confirmDeleteBtn">🗑️ Ya, Hapus Barang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h4 style="color: #3498db; margin: 0;">Memproses...</h4>
+            <p style="color: #666; margin-top: 10px;">Mohon tunggu sebentar</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        let originalData = {};
+        let deleteKode = null;
+        let deleteRow = null;
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID').format(angka || 0);
+        }
+
+        async function loadBarang() {
+            try {
+                const response = await fetch('/api/list_barang');
+                const data = await response.json();
+                
+                const tbody = $('#barangTableBody');
+                if (data.error || !data.barang || data.barang.length === 0) {
+                    tbody.html('<tr><td colspan="8" class="text-center">📭 Belum ada data barang</td></tr>');
+                    return;
+                }
+
+                let html = '';
+                data.barang.forEach((item, index) => {
+                    const barcodeValue = item.barcode ? String(item.barcode) : '';
+                    const barcodePlaceholder = barcodeValue ? barcodeValue : 'Belum ada barcode';
+                    
+                    html += `
+                        <tr data-kode="${item.kode_barang}" data-nama="${item.nama_barang}">
+                            <td class="text-center">${index + 1}</td>
+                            <td>
+                                <input type="text" class="form-control kode-barang" value="${item.kode_barang}" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control nama-barang" value="${item.nama_barang}" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control barcode" value="${barcodeValue}" placeholder="${barcodePlaceholder}" readonly>
+                            </td>
+                            <td class="text-end">Rp ${formatRupiah(item.harga_jual_tertinggi)}</td>
+                            <td class="text-center">${item.total_stok}</td>
+                            <td class="text-center">
+                                <span class="badge ${item.total_stok > 0 ? 'bg-success' : 'bg-danger'}">
+                                    ${item.total_stok > 0 ? '✓ Tersedia' : '✗ Habis'}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn-action btn-edit">✏️ Edit</button>
+                                <button class="btn-action btn-save">💾 Simpan</button>
+                                <button class="btn-action btn-cancel">❌ Batal</button>
+                                <button class="btn-action btn-delete">🗑️ Hapus</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.html(html);
+            } catch (error) {
+                console.error('Error:', error);
+                $('#barangTableBody').html('<tr><td colspan="8" class="text-center text-danger">❌ Gagal memuat data. Silakan refresh halaman.</td></tr>');
+            }
+        }
+
+        $(document).on('click', '.btn-edit', function() {
+            const btn = $(this);
+            const tr = btn.closest('tr');
+            const kode = tr.data('kode');
+
+            originalData[kode] = {
+                kode_barang: tr.find('.kode-barang').val(),
+                nama_barang: tr.find('.nama-barang').val(),
+                barcode: tr.find('.barcode').val()
+            };
+
+            btn.hide();
+            tr.find('.btn-save').show();
+            tr.find('.btn-cancel').show();
+            tr.find('.btn-delete').show();
+
+            tr.find('.form-control').removeClass('readonly').addClass('editable').prop('readonly', false);
+            tr.addClass('row-editing');
+            $('#barangTableBody tr').not(tr).addClass('row-dimmed');
+        });
+
+        $(document).on('click', '.btn-cancel', function() {
+            const btn = $(this);
+            const tr = btn.closest('tr');
+            const kode = tr.data('kode');
+
+            if (originalData[kode]) {
+                tr.find('.kode-barang').val(originalData[kode].kode_barang);
+                tr.find('.nama-barang').val(originalData[kode].nama_barang);
+                tr.find('.barcode').val(originalData[kode].barcode);
+                delete originalData[kode];
+            }
+
+            resetEditMode(tr);
+        });
+
+        function resetEditMode(tr) {
+            tr.find('.btn-edit').show();
+            tr.find('.btn-save').hide();
+            tr.find('.btn-cancel').hide();
+            tr.find('.btn-delete').hide();
+
+            tr.find('.form-control').removeClass('editable').prop('readonly', true);
+            tr.removeClass('row-editing');
+            $('#barangTableBody tr').removeClass('row-dimmed');
+        }
+
+        $(document).on('click', '.btn-save', function() {
+            const btn = $(this);
+            const tr = btn.closest('tr');
+            const kodeBarangLama = tr.data('kode');
+            
+            const kodeBarangBaru = tr.find('.kode-barang').val().trim();
+            const namaBarang = tr.find('.nama-barang').val().trim();
+            const barcode = tr.find('.barcode').val().trim();
+
+            if (!kodeBarangBaru || !namaBarang) {
+                alert('❌ Kode barang dan nama barang wajib diisi!');
+                return;
+            }
+
+            if (barcode && !/^\d{13}$/.test(barcode)) {
+                alert('❌ Barcode harus 13 digit angka!');
+                return;
+            }
+
+            btn.prop('disabled', true).text('⏳ Menyimpan...');
+
+            $.ajax({
+                url: '/api/update_barang',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    kode_barang_lama: kodeBarangLama,
+                    kode_barang_baru: kodeBarangBaru,
+                    nama_barang: namaBarang,
+                    barcode: barcode || null
+                }),
+                success: function(res) {
+                    if (res.error) {
+                        alert('❌ ' + res.message);
+                    } else {
+                        alert('✅ ' + res.message);
+                        tr.attr('data-kode', kodeBarangBaru);
+                        tr.attr('data-nama', namaBarang);
+                        delete originalData[kodeBarangLama];
+                        resetEditMode(tr);
+                    }
+                    btn.prop('disabled', false).text('💾 Simpan');
+                },
+                error: function(xhr) {
+                    const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan server!';
+                    alert('❌ ' + errorMsg);
+                    btn.prop('disabled', false).text('💾 Simpan');
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-delete', function(e) {
+            e.stopPropagation();
+            
+            const tr = $(this).closest('tr');
+            deleteKode = tr.data('kode');
+            deleteRow = tr;
+            
+            const nama = tr.find('.nama-barang').val();
+            const kode = tr.find('.kode-barang').val();
+            
+            $('#deleteKode').text(kode);
+            $('#deleteNama').text(nama);
+            
+            deleteModal.show();
+        });
+
+        $('#confirmDeleteBtn').on('click', function() {
+            if (!deleteKode || !deleteRow) return;
+
+            const btn = $(this);
+            btn.prop('disabled', true).html('⏳ Menghapus...');
+            
+            deleteModal.hide();
+            $('#loadingOverlay').css('display', 'flex');
+
+            $.ajax({
+                url: '/api/hapus_barang/' + deleteKode,
+                method: 'DELETE',
+                success: function(res) {
+                    $('#loadingOverlay').hide();
+                    
+                    if (res.error) {
+                        alert('❌ Gagal hapus: ' + res.message);
+                    } else {
+                        deleteRow.fadeOut(400, function() {
+                            $(this).remove();
+                            
+                            $('#barangTableBody tr').each(function(index) {
+                                $(this).find('td:first').text(index + 1);
+                            });
+                            
+                            if ($('#barangTableBody tr:visible').length === 0) {
+                                $('#barangTableBody').html(`
+                                    <tr>
+                                        <td colspan="8" class="text-center">
+                                            📭 Belum ada data barang
+                                        </td>
+                                    </tr>
+                                `);
+                            }
+                        });
+                        alert('✅ ' + res.message);
+                    }
+                    
+                    deleteKode = null;
+                    deleteRow = null;
+                    btn.prop('disabled', false).html('🗑️ Ya, Hapus Barang');
+                },
+                error: function(xhr) {
+                    $('#loadingOverlay').hide();
+                    const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal menghapus data!';
+                    alert('❌ ' + errorMsg);
+                    
+                    deleteKode = null;
+                    deleteRow = null;
+                    btn.prop('disabled', false).html('🗑️ Ya, Hapus Barang');
+                }
+            });
+        });
+
+        $('#deleteModal').on('hidden.bs.modal', function() {
+            deleteKode = null;
+            deleteRow = null;
+        });
+
+        loadBarang();
+    });
+    </script>
+</body>
+</html>

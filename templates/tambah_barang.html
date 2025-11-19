@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS | Tambah Barang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f4f6f9;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover { opacity: 0.8; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .content-wrapper {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            padding: 10px 30px;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            padding: 10px 30px;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        .btn-success-sm {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-success-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+        }
+
+        .barcode-preview {
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .barcode-preview.active {
+            display: block;
+            border-color: #3498db;
+        }
+
+        .barcode-preview svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border-right: none;
+        }
+
+        .input-group .form-control, .input-group .form-select {
+            border-left: none;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #2d7a4f;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo-section">
+            <strong>POS</strong> | Point Of Sales
+        </div>
+        <nav class="nav-menu">
+            <a href="/">🏠 DASHBOARD</a>
+            <a href="/penjualan">💰 PENJUALAN</a>
+            <a href="/pembelian">📦 PEMBELIAN</a>
+            <a href="/stok">📊 STOK</a>
+            <a href="/faktur/history">📋 FAKTUR</a>
+            <a href="/master-data">📚 MASTER DATA</a>
+        </nav>
+        <div class="user-info">
+            <span>👤</span>
+            <span>{{ nama_petugas }}</span>
+            <a href="/logout">🚪 LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📦 Tambah Barang Baru</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="info-box">
+                    <strong>ℹ️ Informasi:</strong> Kode barang akan di-generate otomatis jika dikosongkan. 
+                    Barcode bisa berisi huruf, angka, dan karakter khusus (-, _) dengan panjang bebas.
+                </div>
+
+                <form id="formTambahBarang">
+                    <!-- SUPPLIER & KATEGORI -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Supplier</label>
+                            <div class="input-group">
+                                <span class="input-group-text">🏢</span>
+                                <select class="form-select" id="supplier">
+                                    <option value="">-- Pilih Supplier (Opsional) --</option>
+                                </select>
+                                <button type="button" class="btn btn-success-sm" data-bs-toggle="modal" data-bs-target="#modalSupplier">
+                                    + Tambah Baru
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Kategori</label>
+                            <div class="input-group">
+                                <span class="input-group-text">📂</span>
+                                <select class="form-select" id="kategori">
+                                    <option value="">-- Pilih Kategori (Opsional) --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KODE & NAMA BARANG -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Kode Barang</label>
+                            <input type="text" class="form-control" id="kodeBarang" placeholder="Auto-generate: BRG-XXXXXX">
+                            <small class="text-muted">Kosongkan untuk generate otomatis</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nama Barang *</label>
+                            <input type="text" class="form-control" id="namaBarang" placeholder="Masukkan nama barang" required>
+                        </div>
+                    </div>
+
+                    <!-- BARCODE -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Barcode</label>
+                            <div class="input-group">
+                                <span class="input-group-text">📷</span>
+                                <input type="text" class="form-control" id="barcode" placeholder="Masukkan barcode (bebas format)">
+                                <button type="button" class="btn btn-generate" id="btnGenerateBarcode">
+                                    🔄 Generate Barcode (13 digit)
+                                </button>
+                            </div>
+                            <small class="text-muted">Format bebas: bisa huruf, angka, atau campuran (contoh: ABC-12345, 9876543210123)</small>
+                        </div>
+                    </div>
+
+                    <!-- BARCODE PREVIEW -->
+                    <div id="barcodePreview" class="barcode-preview">
+                        <h6 class="text-muted mb-3">Preview Barcode</h6>
+                        <div id="barcodeImage"></div>
+                        <p class="mt-2 mb-0" id="barcodeNumber" style="font-weight: 600; color: #2c3e50;"></p>
+                    </div>
+
+                    <!-- KETERANGAN -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Keterangan / Deskripsi</label>
+                            <textarea class="form-control" id="keterangan" rows="3" placeholder="Deskripsi produk, catatan khusus, dll..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success d-none" id="alertSuccess"></div>
+                    <div class="alert alert-danger d-none" id="alertError"></div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <a href="/master-data" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">💾 Simpan Barang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH SUPPLIER -->
+    <div class="modal fade" id="modalSupplier" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Supplier Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formSupplier">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kode Supplier</label>
+                                <input type="text" class="form-control" id="kodeSupplier" placeholder="Auto-generate">
+                                <small class="text-muted">Kosongkan untuk generate otomatis</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Supplier *</label>
+                                <input type="text" class="form-control" id="namaSupplier" placeholder="PT. ABC Indonesia" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Kontak</label>
+                                <input type="text" class="form-control" id="namaKontak" placeholder="Budi Santoso">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Telepon *</label>
+                                <input type="text" class="form-control" id="telepon" placeholder="081234567890" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="supplier@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Alamat *</label>
+                            <textarea class="form-control" id="alamat" rows="3" placeholder="Jl. Contoh No. 123, Jakarta" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="simpanSupplier()">💾 Simpan Supplier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JsBarcode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // ===== LOAD DATA SUPPLIER & KATEGORI =====
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSuppliers();
+        loadKategoris();
+    });
+
+    async function loadSuppliers() {
+        try {
+            const response = await fetch('/api/supplier');
+            const result = await response.json();
+            
+            if (result.error) {
+                console.error('Gagal load supplier:', result.message);
+                return;
+            }
+            
+            const selectSupplier = document.getElementById('supplier');
+            selectSupplier.innerHTML = '<option value="">-- Pilih Supplier (Opsional) --</option>';
+            
+            result.suppliers.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id_supplier;
+                option.textContent = `${s.nama_supplier} (${s.kode_supplier})`;
+                selectSupplier.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error load suppliers:', error);
+        }
+    }
+
+    async function loadKategoris() {
+        try {
+            const response = await fetch('/api/kategori/select');
+            const result = await response.json();
+            
+            if (result.error) {
+                console.error('Gagal load kategori:', result.message);
+                return;
+            }
+            
+            const selectKategori = document.getElementById('kategori');
+            selectKategori.innerHTML = '<option value="">-- Pilih Kategori (Opsional) --</option>';
+            
+            result.kategoris.forEach(k => {
+                const option = document.createElement('option');
+                option.value = k.id_kategori;
+                option.textContent = `${k.icon_kategori ? k.icon_kategori + ' ' : ''}${k.nama_kategori}`;
+                selectKategori.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error load kategoris:', error);
+        }
+    }
+
+    // ===== SIMPAN SUPPLIER BARU =====
+    async function simpanSupplier() {
+        const data = {
+            kode_supplier: document.getElementById('kodeSupplier').value.trim(),
+            nama_supplier: document.getElementById('namaSupplier').value.trim(),
+            nama_kontak: document.getElementById('namaKontak').value.trim(),
+            telepon: document.getElementById('telepon').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            alamat: document.getElementById('alamat').value.trim(),
+            status: 'aktif'
+        };
+
+        if (!data.nama_supplier) {
+            alert('❌ Nama supplier wajib diisi!');
+            return;
+        }
+        
+        if (!data.telepon) {
+            alert('❌ Telepon wajib diisi!');
+            return;
+        }
+        
+        if (!data.alamat) {
+            alert('❌ Alamat wajib diisi!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/supplier', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.error) {
+                alert('❌ ' + result.message);
+                return;
+            }
+            
+            alert(result.message);
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('modalSupplier')).hide();
+            
+            // Reset form
+            document.getElementById('formSupplier').reset();
+            
+            // Reload supplier list
+            await loadSuppliers();
+            
+            // Auto-select supplier yang baru ditambah
+            document.getElementById('supplier').value = result.id_supplier;
+            
+        } catch (error) {
+            alert('❌ Terjadi kesalahan: ' + error.message);
+        }
+    }
+
+    // ===== GENERATE RANDOM BARCODE (13 DIGIT) =====
+    function generateRandomBarcode() {
+        let barcode = '';
+        for (let i = 0; i < 12; i++) {
+            barcode += Math.floor(Math.random() * 10);
+        }
+        
+        // Calculate EAN-13 check digit
+        let sum = 0;
+        for (let i = 0; i < 12; i++) {
+            const digit = parseInt(barcode[i]);
+            sum += (i % 2 === 0) ? digit : digit * 3;
+        }
+        const checkDigit = (10 - (sum % 10)) % 10;
+        
+        return barcode + checkDigit;
+    }
+
+    // ===== RENDER BARCODE PREVIEW =====
+    function renderBarcode(value) {
+        const barcodeImage = document.getElementById('barcodeImage');
+        const barcodePreview = document.getElementById('barcodePreview');
+        const barcodeNumber = document.getElementById('barcodeNumber');
+        
+        barcodeImage.innerHTML = '<svg id="barcodeSvg"></svg>';
+        
+        try {
+            // ✅ VALIDASI FLEKSIBEL - cek apakah 13 digit untuk EAN-13
+            if (/^\d{13}$/.test(value)) {
+                // Gunakan EAN-13 untuk barcode 13 digit
+                JsBarcode("#barcodeSvg", value, {
+                    format: "EAN13",
+                    width: 2,
+                    height: 100,
+                    displayValue: true,
+                    fontSize: 14,
+                    margin: 10
+                });
+            } else if (/^\d+$/.test(value) && value.length >= 8) {
+                // Gunakan CODE128 untuk barcode numerik lainnya
+                JsBarcode("#barcodeSvg", value, {
+                    format: "CODE128",
+                    width: 2,
+                    height: 100,
+                    displayValue: true,
+                    fontSize: 14,
+                    margin: 10
+                });
+            } else if (value.length > 0) {
+                // Gunakan CODE128 untuk barcode alphanumeric
+                JsBarcode("#barcodeSvg", value, {
+                    format: "CODE128",
+                    width: 2,
+                    height: 100,
+                    displayValue: true,
+                    fontSize: 14,
+                    margin: 10
+                });
+            } else {
+                throw new Error('Barcode tidak boleh kosong');
+            }
+            
+            barcodeNumber.textContent = value;
+            barcodePreview.classList.add('active');
+            
+        } catch (error) {
+            console.error('Error rendering barcode:', error);
+            barcodeImage.innerHTML = `<p class="text-warning">⚠️ ${error.message || 'Format barcode tidak valid'}</p>`;
+            barcodePreview.classList.add('active');
+        }
+    }
+
+    // ===== HANDLE GENERATE BARCODE BUTTON =====
+    document.getElementById('btnGenerateBarcode').addEventListener('click', function() {
+        const barcode = generateRandomBarcode();
+        document.getElementById('barcode').value = barcode;
+        renderBarcode(barcode);
+    });
+
+    // ===== HANDLE MANUAL BARCODE INPUT =====
+    document.getElementById('barcode').addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value.length > 0) {
+            renderBarcode(value);
+        } else {
+            document.getElementById('barcodePreview').classList.remove('active');
+        }
+    });
+
+    // ===== HANDLE FORM SUBMIT =====
+    document.getElementById('formTambahBarang').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const kodeBarang = document.getElementById('kodeBarang').value.trim();
+        const namaBarang = document.getElementById('namaBarang').value.trim();
+        const barcode = document.getElementById('barcode').value.trim();
+        const idSupplier = document.getElementById('supplier').value;
+        const idKategori = document.getElementById('kategori').value;
+        const keterangan = document.getElementById('keterangan').value.trim();
+
+        if (!namaBarang) {
+            showAlert('error', '❌ Nama barang wajib diisi!');
+            return;
+        }
+
+        // ✅ VALIDASI BARCODE FLEKSIBEL
+        if (barcode) {
+            const validPattern = /^[a-zA-Z0-9\-_]+$/;
+            if (!validPattern.test(barcode)) {
+                showAlert('error', '❌ Barcode hanya boleh berisi huruf, angka, tanda hubung (-), dan underscore (_)');
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch('/tambah_barang', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    kode_barang: kodeBarang,
+                    nama_barang: namaBarang,
+                    barcode: barcode || null,
+                    id_supplier: idSupplier || null,
+                    id_kategori: idKategori || null,
+                    keterangan: keterangan || null
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                showAlert('error', '❌ ' + data.message);
+                return;
+            }
+
+            let successMsg = `✅ ${data.message}\n📦 Kode: ${data.kode_barang}\n📝 Nama: ${data.nama_barang}`;
+            if (data.barcode) {
+                successMsg += `\n📷 Barcode: ${data.barcode}`;
+            }
+            
+            showAlert('success', successMsg);
+            
+            // Reset form
+            document.getElementById('formTambahBarang').reset();
+            document.getElementById('barcodePreview').classList.remove('active');
+
+            // Redirect ke master data setelah 2 detik
+            setTimeout(() => {
+                window.location.href = '/master-data';
+            }, 2000);
+
+        } catch (error) {
+            showAlert('error', '❌ Terjadi kesalahan: ' + error.message);
+        }
+    });
+
+    function showAlert(type, message) {
+        const alertSuccess = document.getElementById('alertSuccess');
+        const alertError = document.getElementById('alertError');
+
+        const formattedMessage = message.replace(/\n/g, '<br>');
+
+        if (type === 'success') {
+            alertSuccess.innerHTML = formattedMessage;
+            alertSuccess.classList.remove('d-none');
+            alertError.classList.add('d-none');
+        } else {
+            alertError.innerHTML = formattedMessage;
+            alertError.classList.remove('d-none');
+            alertSuccess.classList.add('d-none');
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    </script>
+</body>
+</html>

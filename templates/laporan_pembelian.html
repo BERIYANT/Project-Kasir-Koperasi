@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS | Laporan Pembelian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f4f6f9;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover { opacity: 0.8; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .breadcrumb-section {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .filter-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .view-toggle button {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .view-toggle button.active {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            border-color: #d35400;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid;
+        }
+
+        .summary-card.total { border-left-color: #e67e22; }
+        .summary-card.transaksi { border-left-color: #3498db; }
+        .summary-card.supplier { border-left-color: #9b59b6; }
+
+        .summary-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+        }
+
+        .table thead th {
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .supplier-link {
+            color: #e67e22;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .supplier-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 73, 94, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .top-header, .breadcrumb-section, .filter-card, .view-toggle { display: none !important; }
+            body { background: white; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .summary-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-header no-print">
+        <div class="logo-section">
+            <strong>POS</strong> | Point Of Sales
+        </div>
+        <nav class="nav-menu">
+            <a href="/">🏠 DASHBOARD</a>
+            <a href="/penjualan">💰 PENJUALAN</a>
+            <a href="/pembelian">📦 PEMBELIAN</a>
+            <a href="/stok">📊 STOK</a>
+            <a href="/faktur/history">📋 FAKTUR</a>
+            <a href="/master-data">📚 MASTER DATA</a>
+        </nav>
+        <div class="user-info">
+            <span>👤</span>
+            <span>{{ nama_petugas }}</span>
+            <a href="/logout">🚪 LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="breadcrumb-section no-print">
+            <h5 style="margin: 0; color: #2c3e50; font-weight: 600;">
+                📦 Laporan Pembelian <small style="color: #95a5a6;">Lihat laporan pembelian per supplier</small>
+            </h5>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="font-size: 13px; margin: 10px 0 0 0;">
+                    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+                    <li class="breadcrumb-item active">Laporan Pembelian</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-card no-print">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 style="margin: 0; color: #2c3e50; font-weight: 600;">Filter Periode</h6>
+                <button class="btn-print" onclick="window.print()">🖨️ Cetak</button>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal Mulai</label>
+                    <input type="date" class="form-control" id="tanggalMulai">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal Selesai</label>
+                    <input type="date" class="form-control" id="tanggalSelesai">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Nama PT / Supplier</label>
+                    <input type="text" class="form-control" id="filterNamaSupplier" placeholder="Cari nama PT / supplier...">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="applyFilter()">
+                        🔍 Tampilkan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle no-print">
+            <button class="active" id="btnUmum" onclick="showView('umum')">
+                📋 Laporan Umum
+            </button>
+            <button id="btnDetail" onclick="showView('detail')" style="display: none;">
+                📄 Laporan Detail
+            </button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <div class="summary-label">Total Pembelian</div>
+                <div class="summary-value" id="summaryTotal">Rp 0</div>
+            </div>
+            <div class="summary-card transaksi">
+                <div class="summary-label">Total Transaksi</div>
+                <div class="summary-value" id="summaryTransaksi">0</div>
+            </div>
+            <div class="summary-card supplier">
+                <div class="summary-label">Jumlah Supplier</div>
+                <div class="summary-value" id="summarySupplier">0</div>
+            </div>
+        </div>
+
+        <!-- Laporan Umum Table -->
+        <div class="table-card" id="tabelUmum">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 style="margin: 0; color: #2c3e50; font-weight: 600;">Laporan Umum Pembelian</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Anggota</th>
+                            <th>Kontak</th>
+                            <th>Total Transaksi</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyUmum">
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Laporan Detail Table -->
+        <div class="table-card" id="tabelDetail" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 style="margin: 0; color: #2c3e50; font-weight: 600;">
+                    Laporan Detail Pembelian - <span id="namaSupplier"></span>
+                </h6>
+                <button class="btn-back" onclick="showView('umum')">
+                    ← Kembali
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Faktur</th>
+                            <th>Barang</th>
+                            <th>Item</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyDetail">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentView = 'umum';
+        let currentSupplier = null;
+        let currentFilters = {
+            tanggal_mulai: '',
+            tanggal_selesai: '',
+            nama_supplier: ''
+        };
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
+
+        function showView(view) {
+            currentView = view;
+            
+            document.getElementById('btnUmum').classList.remove('active');
+            document.getElementById('btnDetail').classList.remove('active');
+            
+            if (view === 'umum') {
+                document.getElementById('btnUmum').classList.add('active');
+                document.getElementById('btnDetail').style.display = 'none';
+                document.getElementById('tabelUmum').style.display = 'block';
+                document.getElementById('tabelDetail').style.display = 'none';
+                loadLaporanUmum();
+            } else {
+                document.getElementById('btnDetail').classList.add('active');
+                document.getElementById('btnDetail').style.display = 'block';
+                document.getElementById('tabelUmum').style.display = 'none';
+                document.getElementById('tabelDetail').style.display = 'block';
+                loadLaporanDetail(currentSupplier);
+            }
+        }
+
+        function applyFilter() {
+            currentFilters.tanggal_mulai = document.getElementById('tanggalMulai').value;
+            currentFilters.tanggal_selesai = document.getElementById('tanggalSelesai').value;
+            currentFilters.nama_supplier = document.getElementById('filterNamaSupplier').value.trim();
+
+            if (currentView === 'umum') {
+                loadLaporanUmum();
+            } else {
+                loadLaporanDetail(currentSupplier);
+            }
+        }
+
+        async function loadLaporanUmum() {
+            try {
+                const params = new URLSearchParams(currentFilters);
+                const response = await fetch(`/api/laporan/pembelian/umum?${params}`);
+                const result = await response.json();
+
+                if (result.error) {
+                    console.error(result.message);
+                    return;
+                }
+
+                // Update summary
+                document.getElementById('summaryTotal').textContent = formatRupiah(result.summary.total_keseluruhan);
+                document.getElementById('summaryTransaksi').textContent = result.summary.total_transaksi;
+                document.getElementById('summarySupplier').textContent = result.summary.jumlah_supplier;
+
+                // Update table
+                const tbody = document.getElementById('bodyUmum');
+                
+                // Filter by nama supplier (client-side, for extra safety)
+                let filteredData = result.data;
+                const namaFilter = (currentFilters.nama_supplier || '').toLowerCase();
+                if (namaFilter) {
+                    filteredData = filteredData.filter(row =>
+                        (row.anggota || '').toLowerCase().includes(namaFilter)
+                    );
+                }
+
+                if (filteredData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div style="font-size: 48px;">📭</div>
+                                    <h5>Tidak ada data</h5>
+                                    <p>Belum ada transaksi pembelian pada periode ini</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = filteredData.map((row, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <a class="supplier-link" onclick="viewDetail('${row.anggota}')">
+                                ${row.anggota}
+                            </a>
+                        </td>
+                        <td>${row.kontak}</td>
+                        <td>${row.jumlah_transaksi}</td>
+                        <td>${formatRupiah(row.total)}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        async function loadLaporanDetail(supplier) {
+            try {
+                const params = new URLSearchParams({
+                    ...currentFilters,
+                    anggota: supplier
+                });
+                
+                const response = await fetch(`/api/laporan/pembelian/detail?${params}`);
+                const result = await response.json();
+
+                if (result.error) {
+                    console.error(result.message);
+                    return;
+                }
+
+                // Update header
+                document.getElementById('namaSupplier').textContent = result.anggota;
+
+                // Update summary
+                document.getElementById('summaryTotal').textContent = formatRupiah(result.summary.total_keseluruhan);
+                document.getElementById('summaryTransaksi').textContent = result.summary.jumlah_item;
+                document.getElementById('summarySupplier').textContent = result.summary.jumlah_item;
+
+                // Update table
+                const tbody = document.getElementById('bodyDetail');
+                
+                if (result.data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div style="font-size: 48px;">📭</div>
+                                    <h5>Tidak ada data</h5>
+                                    <p>Belum ada detail transaksi</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = result.data.map((row, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${row.faktur}</td>
+                        <td>${row.barang}</td>
+                        <td>${row.item}</td>
+                        <td>${formatRupiah(row.subtotal)}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading detail:', error);
+            }
+        }
+
+        function viewDetail(supplier) {
+            currentSupplier = supplier;
+            showView('detail');
+        }
+
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            document.getElementById('tanggalMulai').valueAsDate = firstDay;
+            document.getElementById('tanggalSelesai').valueAsDate = today;
+            
+            applyFilter();
+
+            document.getElementById('filterNamaSupplier').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    applyFilter();
+                }
+            });
+        });
+    </script>
+</body>
+</html>s

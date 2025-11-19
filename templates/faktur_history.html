@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Faktur - Koperasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d7a5f 0%, #1e5a47 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        .header {
+            border-bottom: 3px solid #2d7a5f;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1e5a47;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #2d7a5f;
+            background: white;
+            color: #2d7a5f;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .filter-btn:hover {
+            background: #2d7a5f;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 122, 95, 0.3);
+        }
+        
+        .filter-btn.active {
+            background: #2d7a5f;
+            color: white;
+        }
+        
+        .btn-back {
+            background: #95a5a6;
+            border-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #7f8c8d;
+            border-color: #7f8c8d;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #2d7a5f 0%, #1e5a47 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        table thead {
+            background: linear-gradient(135deg, #2d7a5f 0%, #1e5a47 100%);
+            color: white;
+        }
+        
+        table th {
+            padding: 15px 10px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        
+        table tbody tr {
+            transition: all 0.3s;
+        }
+        
+        table tbody tr:hover {
+            background-color: #e8f5f0;
+            transform: scale(1.01);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-pembelian {
+            background-color: #fef3e2;
+            color: #d97706;
+        }
+        
+        .badge-penjualan {
+            background-color: #d1f4e0;
+            color: #1e5a47;
+        }
+        
+        .btn-view, .btn-delete {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #2d7a5f;
+            color: white;
+        }
+        .btn-view:hover {
+            background: #1e5a47;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 122, 95, 0.3);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-data svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 15px; }
+            table { font-size: 11px; }
+            table th, table td { padding: 8px 5px; }
+            .filter-section { flex-direction: column; align-items: stretch; }
+            .filter-btn { text-align: center; }
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #2d7a5f;
+            box-shadow: 0 0 10px rgba(45, 122, 95, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Riwayat Faktur</h1>
+            <p>Lihat dan kelola semua faktur pembelian dan penjualan</p>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <a href="{{ url_for('faktur_history') }}" class="filter-btn {% if not tipe_filter %}active{% endif %}">
+                📊 Semua Faktur
+            </a>
+            <a href="{{ url_for('faktur_history', tipe='pembelian') }}" class="filter-btn {% if tipe_filter == 'pembelian' %}active{% endif %}">
+                🛒 Pembelian
+            </a>
+            <a href="{{ url_for('faktur_history', tipe='penjualan') }}" class="filter-btn {% if tipe_filter == 'penjualan' %}active{% endif %}">
+                💰 Penjualan
+            </a>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Cari nomor faktur, pelanggan...">
+            </div>
+            
+            <a href="{{ url_for('index') }}" class="filter-btn btn-back">
+                ← Kembali
+            </a>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Faktur</h3>
+                <div class="value">{{ fakturs|length }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Nilai</h3>
+                <div class="value">Rp {{ "{:,}".format(fakturs|sum(attribute='total')|int).replace(',', '.') }}</div>
+            </div>
+        </div>
+        
+        <!-- Table -->
+        {% if fakturs %}
+        <table id="fakturTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tipe</th>
+                    <th>Nomor Faktur</th>
+                    <th>Tanggal</th>
+                    <th>Pelanggan/Supplier</th>
+                    <th class="text-right">Total</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for faktur in fakturs %}
+                <tr id="row-{{ faktur.id_faktur }}">
+                    <td class="text-center">{{ loop.index }}</td>
+                    <td><span class="badge badge-{{ faktur.tipe }}">{{ faktur.tipe|capitalize }}</span></td>
+                    <td><strong>{{ faktur.nomor_faktur }}</strong></td>
+                    <td>{{ faktur.tanggal }}</td>
+                    <td>{{ faktur.pelanggan or '-' }}</td>
+                    <td class="text-right"><strong>Rp {{ "{:,}".format(faktur.total).replace(',', '.') }}</strong></td>
+                    <td class="text-center">
+                        <a href="{{ url_for('lihat_faktur', id_faktur=faktur.id_faktur) }}" 
+                           class="btn-view" target="_blank">👁️ Lihat</a>
+                        <button class="btn-delete" data-id="{{ faktur.id_faktur }}" onclick="hapusFaktur(this.dataset.id)">🗑️ Hapus</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-data">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z"/>
+            </svg>
+            <h2>Belum Ada Faktur</h2>
+            <p>Faktur akan muncul di sini setelah Anda melakukan transaksi pembelian atau penjualan.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // 🔍 Fungsi pencarian
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const table = document.getElementById('fakturTable');
+            if (!table) return;
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            }
+        });
+
+        // 🗑️ Fungsi hapus faktur
+        function hapusFaktur(id) {
+            if (!confirm("Apakah Anda yakin ingin menghapus faktur ini?")) return;
+            
+            fetch(`/faktur/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.error) {
+                    alert(data.message);
+                    const row = document.getElementById(`row-${id}`);
+                    if (row) row.remove();
+                } else {
+                    alert("Gagal menghapus faktur: " + data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Terjadi kesalahan saat menghapus faktur.");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS | Master Petugas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f4f6f9;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, #2d7a4f 0%, #1a5738 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover { opacity: 0.8; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .breadcrumb-section {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .data-table {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .table {
+            font-size: 14px;
+        }
+
+        .table thead {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+
+        /* Alert Custom */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .alert-custom {
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .table { font-size: 12px; }
+            .btn-sm { font-size: 11px; padding: 4px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Alert Container -->
+    <div class="alert-container" id="alertContainer"></div>
+
+    <header class="top-header">
+        <div class="logo-section">
+            <strong>POS</strong> | Point Of Sales
+        </div>
+        <nav class="nav-menu">
+            <a href="/">🏠 DASHBOARD</a>
+            <a href="/penjualan">💰 PENJUALAN</a>
+            <a href="/pembelian">📦 PEMBELIAN</a>
+            <a href="/stok">📊 STOK</a>
+            <a href="/faktur/history">📋 FAKTUR</a>
+            <a href="/master-data">📚 MASTER DATA</a>
+        </nav>
+        <div class="user-info">
+            <span>👤</span>
+            <span>{{ nama_petugas }}</span>
+            <a href="/logout">🚪 LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="breadcrumb-section">
+            <h5 style="margin: 0; color: #2c3e50; font-weight: 600;">
+                👨‍💼 Master Petugas <small style="color: #95a5a6;">Kelola data petugas kasir</small>
+            </h5>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="font-size: 13px; margin: 10px 0 0 0;">
+                    <li class="breadcrumb-item"><a href="/">🏠 Home</a></li>
+                    <li class="breadcrumb-item"><a href="/master-data">Master Data</a></li>
+                    <li class="breadcrumb-item active">Petugas</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="data-table">
+            <div class="table-header">
+                <h5 style="margin: 0; color: #2c3e50; font-weight: 600;">Daftar Petugas</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPetugas" onclick="resetForm()">
+                    + Tambah Petugas
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Petugas</th>
+                            <th>Nama Petugas</th>
+                            <th>Username</th>
+                            <th>Telepon</th>
+                            <th>Email</th>
+                            <th>Alamat</th>
+                            <th>Role</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="petugasTableBody">
+                        <tr>
+                            <td colspan="9" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Memuat data...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Petugas -->
+    <div class="modal fade" id="modalPetugas" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Tambah Petugas Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formPetugas" onsubmit="return false;">
+                        <input type="hidden" id="petugasId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Petugas *</label>
+                                <input type="text" class="form-control" id="namaPetugas" placeholder="Contoh: John Doe" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Username *</label>
+                                <input type="text" class="form-control" id="username" placeholder="Contoh: johndoe" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Password <span id="passwordLabel">*</span></label>
+                                <input type="password" class="form-control" id="password" placeholder="Minimal 6 karakter">
+                                <small class="text-muted" id="passwordHint" style="display: none;">Kosongkan jika tidak ingin mengubah password</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Telepon *</label>
+                                <input type="tel" class="form-control" id="telepon" placeholder="Contoh: 081234567890" pattern="[0-9]{10,15}" required>
+                                <small class="text-muted">10-15 digit angka</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Contoh: petugas@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alamat</label>
+                            <textarea class="form-control" id="alamat" rows="3" placeholder="Alamat lengkap petugas..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role *</label>
+                            <select class="form-control" id="jabatan" required>
+                                <option value="">-- Pilih Role --</option>
+                                <option value="admin">Admin</option>
+                                <option value="kasir">Kasir</option>
+                                <option value="gudang">Gudang</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btnSimpan" onclick="simpanPetugas()">
+                        <span id="btnText">Simpan</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let petugasList = [];
+        let modalInstance = null;
+
+        // ===========================
+        // Fungsi Helper: Show Alert
+        // ===========================
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alertDiv);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // ===========================
+        // Fungsi Helper: Escape HTML
+        // ===========================
+        function escapeHtml(text) {
+            if (!text) return '-';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // ===========================
+        // Reset Form
+        // ===========================
+        function resetForm() {
+            document.getElementById('formPetugas').reset();
+            document.getElementById('petugasId').value = '';
+            document.getElementById('password').required = true;
+            document.getElementById('passwordLabel').textContent = '*';
+            document.getElementById('passwordHint').style.display = 'none';
+            document.getElementById('modalTitle').textContent = 'Tambah Petugas Baru';
+            document.getElementById('jabatan').value = '';
+        }
+
+        // ===========================
+        // Load Data Petugas dari API
+        // ===========================
+        async function loadPetugas() {
+            try {
+                const response = await fetch('/api/petugas');
+                if (!response.ok) {
+                    // Jika status bukan 200, tampilkan error
+                    document.getElementById('petugasTableBody').innerHTML = 
+                        '<tr><td colspan="9" class="text-center text-danger">Gagal memuat data (API tidak ditemukan / 404)</td></tr>';
+                    showAlert('❌ Gagal memuat data petugas. Pastikan API /api/petugas aktif.', 'danger');
+                    return;
+                }
+                const result = await response.json();
+
+                if (result.error) {
+                    showAlert('❌ ' + result.message, 'danger');
+                    document.getElementById('petugasTableBody').innerHTML = 
+                        '<tr><td colspan="9" class="text-center text-danger">Gagal memuat data</td></tr>';
+                    return;
+                }
+
+                petugasList = result.petugas || [];
+                renderTable();
+
+            } catch (error) {
+                console.error('Error loading petugas:', error);
+                showAlert('❌ Terjadi kesalahan saat memuat data', 'danger');
+                document.getElementById('petugasTableBody').innerHTML = 
+                    '<tr><td colspan="9" class="text-center text-danger">Terjadi kesalahan</td></tr>';
+            }
+        }
+
+        // ===========================
+        // Render Table
+        // ===========================
+        function renderTable() {
+            const tbody = document.getElementById('petugasTableBody');
+            
+            if (!petugasList || petugasList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Belum ada data petugas</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = petugasList.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>PTG-${String(item.id_petugas).padStart(3, '0')}</strong></td>
+                    <td>${escapeHtml(item.nama_petugas)}</td>
+                    <td><span class="badge bg-info">${escapeHtml(item.username)}</span></td>
+                    <td>${escapeHtml(item.telepon)}</td>
+                    <td>${escapeHtml(item.email)}</td>
+                    <td>${escapeHtml(item.alamat) || '<span class="text-muted">-</span>'}</td>
+                    <td><span class="badge bg-secondary">${escapeHtml(item.jabatan || item.role || '-')}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editPetugas(${item.id_petugas})">
+                            ✏️ Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="hapusPetugas(${item.id_petugas}, '${escapeHtml(item.nama_petugas)}')">
+                            🗑️ Hapus
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ===========================
+        // Edit Petugas
+        // ===========================
+        async function editPetugas(id) {
+            try {
+                const response = await fetch(`/api/petugas/${id}`);
+                if (response.status === 404) {
+                    showAlert('❌ Petugas tidak ditemukan.', 'danger');
+                    return;
+                }
+                const result = await response.json();
+
+                if (result.error) {
+                    showAlert('❌ ' + result.message, 'danger');
+                    return;
+                }
+
+                // Populate form
+                document.getElementById('petugasId').value = result.id_petugas;
+                document.getElementById('namaPetugas').value = result.nama_petugas;
+                document.getElementById('username').value = result.username;
+                document.getElementById('password').value = '';
+                document.getElementById('password').required = false;
+                document.getElementById('passwordLabel').textContent = '';
+                document.getElementById('passwordHint').style.display = 'block';
+                document.getElementById('telepon').value = result.telepon;
+                document.getElementById('email').value = result.email || '';
+                document.getElementById('alamat').value = result.alamat || '';
+                document.getElementById('jabatan').value = result.jabatan || result.role || '';
+                document.getElementById('modalTitle').textContent = 'Edit Petugas';
+                
+                // Show modal
+                modalInstance = new bootstrap.Modal(document.getElementById('modalPetugas'));
+                modalInstance.show();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('❌ Terjadi kesalahan saat mengambil data', 'danger');
+            }
+        }
+
+        // ===========================
+        // Simpan Petugas (Tambah/Edit)
+        // ===========================
+        async function simpanPetugas() {
+            const form = document.getElementById('formPetugas');
+            
+            // Validasi form HTML5
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const id = document.getElementById('petugasId').value;
+            const password = document.getElementById('password').value;
+
+            // Validasi password untuk tambah baru
+            if (!id && !password) {
+                showAlert('❌ Password wajib diisi untuk petugas baru!', 'warning');
+                document.getElementById('password').focus();
+                return;
+            }
+
+            // Validasi panjang password
+            if (password && password.length < 6) {
+                showAlert('❌ Password minimal 6 karakter!', 'warning');
+                document.getElementById('password').focus();
+                return;
+            }
+
+            const data = {
+                nama_petugas: document.getElementById('namaPetugas').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                telepon: document.getElementById('telepon').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                alamat: document.getElementById('alamat').value.trim(),
+                jabatan: document.getElementById('jabatan').value
+            };
+
+            // Tambahkan password jika diisi
+            if (password) {
+                data.password = password;
+            }
+
+            // Disable button & show spinner
+            const btnSimpan = document.getElementById('btnSimpan');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            
+            btnSimpan.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const url = id ? `/api/petugas/${id}` : '/api/petugas';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    showAlert('❌ ' + result.message, 'danger');
+                } else {
+                    showAlert(result.message, 'success');
+                    
+                    // Close modal
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    } else {
+                        bootstrap.Modal.getInstance(document.getElementById('modalPetugas')).hide();
+                    }
+
+                    // Reload data
+                    await loadPetugas();
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('❌ Terjadi kesalahan saat menyimpan data', 'danger');
+            } finally {
+                // Enable button & hide spinner
+                btnSimpan.disabled = false;
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+            }
+        }
+
+        // ===========================
+        // Hapus Petugas
+        // ===========================
+        async function hapusPetugas(id, nama) {
+            if (!confirm(`Yakin ingin menghapus petugas "${nama}"?\n\nData yang sudah dihapus tidak dapat dikembalikan!`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/petugas/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    showAlert('❌ ' + result.message, 'danger');
+                } else {
+                    showAlert(result.message, 'success');
+                    await loadPetugas();
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('❌ Terjadi kesalahan saat menghapus data', 'danger');
+            }
+        }
+
+        // ===========================
+        // Event Listeners
+        // ===========================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data saat halaman dibuka
+            loadPetugas();
+
+            // Handle Enter key di form (kecuali di textarea)
+            document.getElementById('formPetugas').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    simpanPetugas();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

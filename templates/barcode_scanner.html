@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner - Kasir Koperasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #e8f5e9;
+        }
+        
+        #scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border: 3px solid #2e7d32;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        #barcode-scanner {
+            width: 100%;
+            height: 480px;
+        }
+        
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 120px;
+            border: 3px solid #76ff03;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+            z-index: 10;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { border-color: #76ff03; }
+            50% { border-color: #64dd17; }
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .detected-code {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #c6ff00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+        
+        .btn-scan {
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            border: none;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef5350, #c62828);
+            border: none;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .beep-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2e7d32;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: none;
+            z-index: 9999;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #388e3c, #1b5e20);
+        }
+
+        .alert-info {
+            background-color: #e8f5e9;
+            border-color: #66bb6a;
+            color: #1b5e20;
+        }
+
+        .bg-light {
+            background-color: #f1f8f4 !important;
+        }
+
+        .text-primary {
+            color: #2e7d32 !important;
+        }
+
+        .text-success {
+            color: #43a047 !important;
+        }
+
+        .alert-warning {
+            background-color: #fff9c4;
+            border-color: #f9a825;
+            color: #f57f17;
+        }
+
+        .card-title {
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <div class="beep-indicator" id="beep-indicator">
+        <i class="fas fa-check-circle me-2"></i>Barcode Terdeteksi!
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-barcode me-2"></i>Barcode Scanner
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/penjualan"><i class="fas fa-shopping-cart me-1"></i>Penjualan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/stok"><i class="fas fa-boxes me-1"></i>Stok</a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link text-white"><i class="fas fa-user me-1"></i>{{ nama_petugas }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2 class="fw-bold" style="color: #1b5e20;">
+                    <i class="fas fa-qrcode text-success"></i> Scanner Barcode Produk
+                </h2>
+                <p class="text-muted">Scan barcode untuk mencari atau mendaftarkan produk</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- KAMERA SCANNER -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">
+                            <i class="fas fa-camera text-success"></i> Kamera Scanner
+                        </h5>
+                        
+                        <div id="scanner-container" style="display: none;">
+                            <div id="barcode-scanner"></div>
+                            <div class="scanner-overlay"></div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button id="btn-start-scan" class="btn btn-success btn-scan">
+                                <i class="fas fa-play me-2"></i>Mulai Scan
+                            </button>
+                            <button id="btn-stop-scan" class="btn btn-danger btn-scan" style="display: none;">
+                                <i class="fas fa-stop me-2"></i>Stop Scan
+                            </button>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>Cara Menggunakan:
+                            </h6>
+                            <ol class="mb-0 small">
+                                <li>Klik tombol <strong>"Mulai Scan"</strong></li>
+                                <li>Izinkan akses kamera browser</li>
+                                <li>Arahkan barcode ke dalam kotak hijau</li>
+                                <li>Tunggu hingga barcode terdeteksi otomatis</li>
+                                <li>Hasil akan muncul di panel sebelah kanan</li>
+                            </ol>
+                        </div>
+
+                        <!-- INPUT MANUAL -->
+                        <div class="card mt-3 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3" style="color: #1b5e20;">
+                                    <i class="fas fa-keyboard me-2"></i>Input Manual Barcode
+                                </h6>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-lg" 
+                                           id="manual-barcode-input" 
+                                           placeholder="Ketik/scan barcode manual..." 
+                                           autocomplete="off">
+                                    <button class="btn btn-primary" onclick="processManualBarcode()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Gunakan barcode scanner USB atau ketik manual, lalu tekan Enter
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HASIL SCAN -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">
+                            <i class="fas fa-clipboard-check text-success"></i> Hasil Scan
+                        </h5>
+                        
+                        <div id="result-container" style="display: none;">
+                            <div class="result-box">
+                                <div class="text-center mb-3">
+                                    <label class="form-label fw-bold text-white">Barcode Terdeteksi:</label>
+                                    <div class="detected-code" id="detected-barcode">-</div>
+                                </div>
+                                
+                                <!-- INFO PRODUK DITEMUKAN -->
+                                <div id="product-info" style="display: none;">
+                                    <div class="product-card mt-3">
+                                        <h5 class="text-success mb-3">
+                                            <i class="fas fa-check-circle"></i> Produk Ditemukan!
+                                        </h5>
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <td width="40%" class="fw-bold">Kode Barang:</td>
+                                                <td id="info-kode" class="fw-bold" style="color: #2e7d32;">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Nama Barang:</td>
+                                                <td id="info-nama" class="fw-bold">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Harga Jual:</td>
+                                                <td id="info-harga" class="text-success fw-bold fs-5">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Stok Tersedia:</td>
+                                                <td id="info-stok" class="fw-bold">-</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <div class="d-grid gap-2 mt-3">
+                                            <a href="/penjualan" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-shopping-cart me-2"></i>Jual Produk Ini
+                                            </a>
+                                            <a href="/stok" class="btn btn-success">
+                                                <i class="fas fa-eye me-2"></i>Lihat Detail Stok
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- FORM BARCODE BARU -->
+                                <div id="barcode-form" style="display: none;">
+                                    <div class="product-card mt-3">
+                                        <div class="alert alert-warning">
+                                            <h6 class="alert-heading">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>Barcode Belum Terdaftar
+                                            </h6>
+                                            <p class="mb-0 small">
+                                                Barcode ini belum terhubung dengan produk manapun. 
+                                                Masukkan kode barang yang sudah ada untuk menyimpan barcode ini.
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Kode Barang:</label>
+                                            <input type="text" class="form-control form-control-lg" 
+                                                   id="input-kode-barang" 
+                                                   placeholder="Contoh: BRG-ABC123">
+                                            <small class="text-muted">
+                                                Masukkan kode barang yang sudah terdaftar di sistem
+                                            </small>
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-success btn-lg" onclick="saveBarcode()">
+                                                <i class="fas fa-save me-2"></i>Simpan Barcode
+                                            </button>
+                                            <a href="/tambah_barang" class="btn btn-outline-success">
+                                                <i class="fas fa-plus me-2"></i>Tambah Barang Baru
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="no-result" class="text-center text-muted py-5">
+                            <i class="fas fa-qrcode fa-4x mb-3 opacity-25"></i>
+                            <h5>Belum Ada Hasil</h5>
+                            <p>Scan barcode atau input manual untuk melihat hasilnya</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    
+    <script>
+        let lastDetectedCode = null;
+        let isScanning = false;
+        let detectionTimeout = null;
+
+        document.getElementById('btn-start-scan').addEventListener('click', function() {
+            startScanner();
+        });
+
+        document.getElementById('btn-stop-scan').addEventListener('click', function() {
+            stopScanner();
+        });
+
+        document.getElementById('manual-barcode-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                processManualBarcode();
+            }
+        });
+
+        function startScanner() {
+            isScanning = true;
+            document.getElementById('scanner-container').style.display = 'block';
+            document.getElementById('btn-start-scan').style.display = 'none';
+            document.getElementById('btn-stop-scan').style.display = 'inline-block';
+
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#barcode-scanner'),
+                    constraints: {
+                        width: 640,
+                        height: 480,
+                        facingMode: "environment"
+                    }
+                },
+                decoder: {
+                    readers: [
+                        "ean_reader",
+                        "ean_8_reader",
+                        "code_128_reader",
+                        "code_39_reader",
+                        "upc_reader",
+                        "upc_e_reader",
+                        "codabar_reader",
+                        "i2of5_reader"
+                    ]
+                },
+                locator: {
+                    halfSample: true,
+                    patchSize: "medium"
+                }
+            }, function(err) {
+                if (err) {
+                    console.error('Error scanner:', err);
+                    alert('❌ Error: Tidak dapat mengakses kamera!\n\n' + err.message + '\n\nPastikan:\n1. Browser mendukung kamera\n2. Anda mengizinkan akses kamera\n3. Tidak ada aplikasi lain yang menggunakan kamera');
+                    stopScanner();
+                    return;
+                }
+                console.log("✅ Scanner berhasil diinisialisasi");
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(result) {
+                const code = result.codeResult.code;
+                
+                if (code !== lastDetectedCode) {
+                    lastDetectedCode = code;
+                    
+                    if (detectionTimeout) {
+                        clearTimeout(detectionTimeout);
+                    }
+                    
+                    console.log("✅ Barcode detected:", code);
+                    showBeepIndicator();
+                    playBeep();
+                    processBarcodeResult(code);
+                    
+                    detectionTimeout = setTimeout(() => {
+                        lastDetectedCode = null;
+                    }, 2000);
+                }
+            });
+        }
+
+        function stopScanner() {
+            isScanning = false;
+            if (typeof Quagga !== 'undefined') {
+                Quagga.stop();
+            }
+            document.getElementById('scanner-container').style.display = 'none';
+            document.getElementById('btn-start-scan').style.display = 'inline-block';
+            document.getElementById('btn-stop-scan').style.display = 'none';
+        }
+
+        function showBeepIndicator() {
+            const indicator = document.getElementById('beep-indicator');
+            indicator.style.display = 'block';
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 2000);
+        }
+
+        function playBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 1000;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.15);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function processBarcodeResult(barcode) {
+            document.getElementById('detected-barcode').textContent = barcode;
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('no-result').style.display = 'none';
+            
+            document.getElementById('product-info').style.display = 'none';
+            document.getElementById('barcode-form').style.display = 'none';
+            
+            fetch(`/api/get_barang_by_barcode/${encodeURIComponent(barcode)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('product-info').style.display = 'none';
+                        document.getElementById('barcode-form').style.display = 'block';
+                    } else {
+                        document.getElementById('product-info').style.display = 'block';
+                        document.getElementById('barcode-form').style.display = 'none';
+                        
+                        document.getElementById('info-kode').textContent = data.kode_barang;
+                        document.getElementById('info-nama').textContent = data.nama_barang;
+                        document.getElementById('info-harga').textContent = 'Rp ' + data.harga_jual.toLocaleString('id-ID');
+                        
+                        const stokText = data.stok + ' pcs';
+                        const stokColor = data.stok > 10 ? 'text-success' : (data.stok > 0 ? 'text-warning' : 'text-danger');
+                        document.getElementById('info-stok').innerHTML = `<span class="${stokColor}">${stokText}</span>`;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('❌ Terjadi kesalahan saat mencari barcode!');
+                });
+        }
+
+        function processManualBarcode() {
+            const barcode = document.getElementById('manual-barcode-input').value.trim();
+            if (barcode) {
+                processBarcodeResult(barcode);
+                document.getElementById('manual-barcode-input').value = '';
+            } else {
+                alert('⚠️ Silakan masukkan barcode terlebih dahulu!');
+            }
+        }
+
+        function saveBarcode() {
+            const barcode = document.getElementById('detected-barcode').textContent;
+            const kodeBarang = document.getElementById('input-kode-barang').value.trim();
+            
+            if (!kodeBarang) {
+                alert('⚠️ Silakan masukkan kode barang!');
+                document.getElementById('input-kode-barang').focus();
+                return;
+            }
+            
+            const btnSave = event.target;
+            const originalText = btnSave.innerHTML;
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+            
+            fetch('/api/update_barcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    kode_barang: kodeBarang,
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                
+                if (data.error) {
+                    alert('❌ Error: ' + data.message);
+                } else {
+                    alert('✅ Barcode Berhasil Disimpan!\n\n' + 
+                          '📦 Barang: ' + data.nama_barang + '\n' +
+                          '🏷️ Kode: ' + data.kode_barang + '\n' +
+                          '📊 Barcode: ' + data.barcode);
+                    
+                    processBarcodeResult(barcode);
+                    document.getElementById('input-kode-barang').value = '';
+                }
+            })
+            .catch(err => {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                console.error('Error:', err);
+                alert('❌ Terjadi kesalahan saat menyimpan barcode!');
+            });
+        }
+
+        window.addEventListener('load', function() {
+            document.getElementById('manual-barcode-input').focus();
+        });
+    </script>
+</body>
+</html>
